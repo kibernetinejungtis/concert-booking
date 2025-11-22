@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiek kainuoja koncertas?</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="icon-group">🎸🎵🎤</div>
+        <h1>Kiek kainuoja koncertas?</h1>
+        <p class="subtitle">Sužinokite preliminarią kainą ir pasitikrinkite prieinamumą</p>
+
+        <form id="bookingForm">
+            <div class="form-group">
+                <label for="name">Jūsų vardas *</label>
+                <input type="text" id="name" required placeholder="Įveskite savo vardą" maxlength="100">
+            </div>
+
+            <div class="form-group">
+                <label for="date">Pageidaujama data *</label>
+                <input type="date" id="date" required style="cursor: pointer;">
+            </div>
+
+            <div class="form-group">
+                <label for="timeSlot">Pageidaujamas laikas *</label>
+                <select id="timeSlot" required>
+                    <option value="">Pasirinkite laiko intervalą</option>
+                    <option value="10:00-13:00">10:00 - 13:00</option>
+                    <option value="13:00-16:00">13:00 - 16:00</option>
+                    <option value="16:00-19:00">16:00 - 19:00</option>
+                    <option value="19:00-22:00">19:00 - 22:00</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="search">Koncerto vieta (miestas / kaimas) *</label>
+                
+                <div id="quickZoomButtons" style="display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap;"></div>
+                
+                <div style="position: relative;">
+                    <input type="text" id="search" class="search-box" placeholder="Įveskite miesto pavadinimą" autocomplete="off" maxlength="200">
+                    <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                </div>
+                <div style="position: relative;">
+                    <div id="map"></div>
+                </div>
+                <input type="hidden" id="selectedAddress">
+                <input type="hidden" id="selectedLat">
+                <input type="hidden" id="selectedLng">
+            </div>
+
+            <button type="submit" id="checkBtn">Tikrinti</button>
+        </form>
+
+        <div id="loading" class="loading" style="display: none;">
+            <p>⏳ Tikrinama prieinamybė ir skaičiuojama kaina...</p>
+        </div>
+
+        <div id="resultBox" class="result-box"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
