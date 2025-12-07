@@ -1,69 +1,875 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="lt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiek kainuoja koncertas?</title>
+    <meta name="description" content="Klajoklė - Asmeninis koncertas mylimiausiem. Užsisakykite nepamirštamą muzikos patyrimą.">
+    <title>Klajoklė - Asmeninis koncertas mylimiausiem</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #1a1a1a;
+            --secondary-dark: #2d2d2d;
+            --gold: #c9a668;
+            --white: #ffffff;
+            --light-gray: #f5f5f5;
+            --text-gray: #666;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--primary-dark);
+            background: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation - Freshcut Style */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 1000;
+            padding: 1.5rem 4rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 1rem 4rem;
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: var(--gold);
+        }
+
+        .nav-cta {
+            background: var(--primary-dark);
+            color: var(--white) !important;
+            padding: 0.8rem 2rem;
+            border-radius: 0;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-cta:hover {
+            background: var(--gold);
+            color: var(--primary-dark) !important;
+        }
+
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--primary-dark);
+            transition: 0.3s;
+        }
+
+        /* Hero Section - Freshcut Style with Video */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0.7;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .hero-logo {
+            max-width: 400px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Concerts Carousel - Styled like Freshcut promo banner */
+        .concerts-banner {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--gold);
+            color: var(--primary-dark);
+            padding: 1rem 2rem;
+            text-align: center;
+            z-index: 3;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        /* About Section - Freshcut Style */
+        .about-section {
+            padding: 8rem 4rem;
+            background: white;
+        }
+
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .section-header h4 {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .about-text {
+            padding: 2rem 0;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--primary-dark);
+            color: white;
+            padding: 1.2rem 3rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: var(--gold);
+            color: var(--primary-dark);
+        }
+
+        /* Videos Section - Like Freshcut products */
+        .videos-section {
+            padding: 8rem 4rem;
+            background: var(--light-gray);
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .video-card {
+            background: white;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .video-card iframe {
+            width: 100%;
+            height: 250px;
+            border: none;
+            display: block;
+        }
+
+        .video-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .video-category {
+            font-size: 0.85rem;
+            color: var(--gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Quote Section - Like Freshcut slogan */
+        .quote-section {
+            position: relative;
+            padding: 12rem 4rem;
+            background-image: url('https://zmones.15min.lt/images/photos/2024569/original/viktorija-kajokaite-klajokle-65f4eb8cd9094.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            text-align: center;
+            color: white;
+        }
+
+        .quote-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 0;
+        }
+
+        .quote-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .quote-content h3 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Services/Booking Section - Like Freshcut services */
+        .booking-section {
+            padding: 8rem 4rem;
+            background: white;
+        }
+
+        .services-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 5rem;
+        }
+
+        .form-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--light-gray);
+            padding: 4rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        #map {
+            width: 100%;
+            height: 400px;
+            margin-top: 1rem;
+            border: 1px solid #ddd;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .autocomplete-item:hover {
+            background: var(--light-gray);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1.5rem;
+            background: var(--primary-dark);
+            color: white;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: var(--gold);
+            color: var(--primary-dark);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gold);
+            display: none;
+        }
+
+        .result-box {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: white;
+            border: 2px solid var(--gold);
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--gold);
+        }
+
+        /* Footer - Freshcut Style */
+        footer {
+            background: var(--primary-dark);
+            color: white;
+            padding: 4rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+
+        .footer-col h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .footer-col p, .footer-col a {
+            color: #ccc;
+            text-decoration: none;
+            line-height: 2;
+            display: block;
+        }
+
+        .footer-col a:hover {
+            color: var(--gold);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid #444;
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            nav {
+                padding: 1rem 2rem;
+            }
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1rem;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .about-section,
+            .videos-section,
+            .booking-section {
+                padding: 4rem 2rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .form-wrapper {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .quote-content h3 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Minimap */
+        .minimap-container {
+            position: absolute;
+            bottom: 20px;
+            right: 10px;
+            width: 150px;
+            height: 150px;
+            border: 3px solid var(--gold);
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="icon-group">🎸🎵🎤</div>
-        <h1>Kiek kainuoja koncertas?</h1>
-        <p class="subtitle">Sužinokite preliminarią kainą ir pasitikrinkite prieinamumą</p>
-
-        <form id="bookingForm">
-            <div class="form-group">
-                <label for="name">Jūsų vardas *</label>
-                <input type="text" id="name" required placeholder="Įveskite savo vardą" maxlength="100">
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Klajoklė</a>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
-
-            <div class="form-group">
-                <label for="date">Pageidaujama data *</label>
-                <input type="date" id="date" required style="cursor: pointer;">
-            </div>
-
-            <div class="form-group">
-                <label for="timeSlot">Pageidaujamas laikas *</label>
-                <select id="timeSlot" required>
-                    <option value="">Pasirinkite laiko intervalą</option>
-                    <option value="10:00-13:00">10:00 - 13:00</option>
-                    <option value="13:00-16:00">13:00 - 16:00</option>
-                    <option value="16:00-19:00">16:00 - 19:00</option>
-                    <option value="19:00-22:00">19:00 - 22:00</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="search">Koncerto vieta (miestas / kaimas) *</label>
-                
-                <div id="quickZoomButtons" style="display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap;"></div>
-                
-                <div style="position: relative;">
-                    <input type="text" id="search" class="search-box" placeholder="Įveskite miesto pavadinimą" autocomplete="off" maxlength="200">
-                    <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
-                </div>
-                <div style="position: relative;">
-                    <div id="map"></div>
-                </div>
-                <input type="hidden" id="selectedAddress">
-                <input type="hidden" id="selectedLat">
-                <input type="hidden" id="selectedLng">
-            </div>
-
-            <button type="submit" id="checkBtn">Tikrinti</button>
-        </form>
-
-        <div id="loading" class="loading" style="display: none;">
-            <p>⏳ Tikrinama prieinamybė ir skaičiuojama kaina...</p>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#about">Apie</a></li>
+                <li><a href="duk.html">D.U.K</a></li>
+                <li><a href="blog.html">Tinklaraštis</a></li>
+                <li><a href="#booking" class="nav-cta">REZERVUOK</a></li>
+            </ul>
         </div>
+    </nav>
 
-        <div id="resultBox" class="result-box"></div>
-    </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="debesys1280.mp4" type="video/mp4" media="(max-width: 768px)">
+            <source src="debesys_1920.mp4" type="video/mp4" media="(max-width: 1920px)">
+            <source src="debesys4k.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Klajoklė</h1>
+            <p class="hero-subtitle">Asmeninis koncertas mylimiausiem</p>
+        </div>
+        <div class="concerts-banner" id="concertsBanner">
+            <span id="concertInfo">Artimiausi koncertai</span>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Asmeninis koncertas mylimiausiem</h2>
+                <h4>Nuo 2014</h4>
+            </div>
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="https://s1.15min.lt/static/cache/ODAweDUzMywxMDA1eDUxMCw3NDYxNTgsb3JpZ2luYWwsLGlkPTEwMDk1Njc0JmRhdGU9MjAyNSUyRjA1JTJGMDcsNTQ5Njg4NjI=/img_8353-681af196ede6a.jpg" alt="Klajoklė">
+                </div>
+                <div class="about-text">
+                    <p>Užsisakykite nepamirštamą muzikos patyrimą savo artimiesiems. Klajoklė sukuria unikalią atmosferą, kurioje kiekviena daina tampa asmenine istorija.</p>
+                    <p>Ar ieškote būdo paminėti ypatingą akimirką? Gimtadienį, vestuvinę sukaktį, ar tiesiog norėtumėte suteikti džiaugsmo mylimiems žmonėms? Asmeninis koncertas - tai dovana, kuri lieka širdyje amžinai.</p>
+                    <p>Pasitikrinkite prieinamumą ir preliminarią kainą jau dabar. Atlikėja susisieks su jumis ir kartu suderinsite visas detales - muziką, vietą, laiką ir tą ypatingą nuotaiką, kurią norite sukurti.</p>
+                    <a href="#booking" class="btn-primary">Pasitikrink kiek kainuoja</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Videos Section -->
+    <section class="videos-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Akimirkos su muzika</h2>
+                <h4>Išskirtinė atranka</h4>
+            </div>
+            <div class="videos-grid">
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/rMXxbF3lMFc" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <p class="video-category">Koncerto akimirka</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/aROg_0_0tU8" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <p class="video-category">Gyvas pasirodymas</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/ttoIG9I7MMM" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <p class="video-category">Užkulisiai</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="quote-section">
+        <div class="quote-content">
+            <h3>"Daina lydi ir meilėje, ir atsisveikinant - svarbu, kad būtų nuoširdžiai"</h3>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="booking-section" id="booking">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Rezervacija</h2>
+                <h4>Patikrinkite prieinamumą</h4>
+            </div>
+            <div class="form-wrapper">
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="name">Jūsų vardas *</label>
+                        <input type="text" id="name" required placeholder="Įveskite savo vardą" maxlength="100">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Pageidaujama data *</label>
+                        <input type="date" id="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeSlot">Pageidaujamas laikas *</label>
+                        <select id="timeSlot" required>
+                            <option value="">Pasirinkite laiko intervalą</option>
+                            <option value="10:00-13:00">10:00 - 13:00</option>
+                            <option value="13:00-16:00">13:00 - 16:00</option>
+                            <option value="16:00-19:00">16:00 - 19:00</option>
+                            <option value="19:00-22:00">19:00 - 22:00</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search">Koncerto vieta (miestas / kaimas) *</label>
+                        <div style="position: relative;">
+                            <input type="text" id="search" placeholder="Įveskite miesto pavadinimą" autocomplete="off" maxlength="200">
+                            <div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+                        </div>
+                        <div style="position: relative;">
+                            <div id="map"></div>
+                        </div>
+                        <input type="hidden" id="selectedAddress">
+                        <input type="hidden" id="selectedLat">
+                        <input type="hidden" id="selectedLng">
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="checkBtn">Tikrinti prieinamumą</button>
+                </form>
+
+                <div id="loading" class="loading">
+                    <p>Tikrinama prieinamybė ir skaičiuojama kaina...</p>
+                </div>
+
+                <div id="resultBox" class="result-box"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Klajoklė</h3>
+                <p>Asmeninis koncertas mylimiausiem</p>
+                <p>Bazė: Vilkaviškis, Lietuva</p>
+            </div>
+            <div class="footer-col">
+                <h3>Nuorodos</h3>
+                <a href="#about">Apie</a>
+                <a href="duk.html">D.U.K</a>
+                <a href="blog.html">Tinklaraštis</a>
+                <a href="#booking">Rezervuok</a>
+            </div>
+            <div class="footer-col">
+                <h3>Kontaktai</h3>
+                <p>El. paštas: info@klajokle.lt</p>
+                <p>Tel: +370 XXX XXXXX</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Klajoklė. Visos teisės saugomos.</p>
+            <p><a href="https://www.vecteezy.com/members/a-morn" target="_blank">Video by Amorn Mimi</a> | 
+            <a href="https://www.vecteezy.com/free-videos/universe" target="_blank">Universe Stock Videos by Vecteezy</a></p>
+        </div>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="script.js"></script>
-</body>
+    <script>
+        // Mobile menu
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
 
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('navMenu').classList.remove('active');
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('mainNav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Concerts carousel
+        let concerts = [];
+        let currentIndex = 0;
+
+        async function loadConcerts() {
+            try {
+                const CONFIG = {
+                    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzdGauDvKnzyr3dnqzIe_ee6DCMDD2RefV8DN3feJJJQMPzBXgB1mhjsKqqaPIqMyr-/exec'
+                };
+
+                const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL + '?action=getUpcomingConcerts');
+                const data = await response.json();
+                
+                if (data.concerts && data.concerts.length > 0) {
+                    concerts = data.concerts;
+                    displayConcert(0);
+                    if (concerts.length > 1) {
+                        setInterval(() => {
+                            currentIndex = (currentIndex + 1) % concerts.length;
+                            displayConcert(currentIndex);
+                        }, 4000);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading concerts:', error);
+            }
+        }
+
+        function displayConcert(index) {
+            if (concerts.length === 0) return;
+            
+            const concert = concerts[index];
+            const date = new Date(concert.date);
+            const months = ['sausio', 'vasario', 'kovo', 'balandžio', 'gegužės', 'birželio', 
+                          'liepos', 'rugpjūčio', 'rugsėjo', 'spalio', 'lapkričio', 'gruodžio'];
+            const formattedDate = `${months[date.getMonth()]} ${date.getDate()}d.`;
+            
+            const confirmed = concert.confirmed === true || concert.confirmed === 'true';
+            const asterisk = confirmed ? '' : '*';
+            
+            document.getElementById('concertInfo').textContent = `${concert.location}${asterisk} - ${formattedDate}`;
+        }
+
+        loadConcerts();
+    </script>
+</body>
 </html>
