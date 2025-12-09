@@ -1,6 +1,6 @@
 // Configuration
 const CONFIG = {
-    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzdGauDvKnzyr3dnqzIe_ee6DCMDD2RefV8DN3feJJJQMPzBXgB1mhjsKqqaPIqMyr-/exec',
+   GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzV6OTsUlNu-tQRUIImwmBZBsFuy6crIAZizyy5fNONikJQukwTcCFT9bEHYTMZT1gk/exec',
     HOME_BASE: 'Vilkaviškis, Lithuania',
     HOME_BASE_COORDS: [54.6517, 23.0355]
 };
@@ -997,4 +997,5 @@ window.onload = function() {
         console.error('Initialization error:', error);
         alert('Klaida inicializuojant žemėlapį. Prašome perkrauti puslapį.');
     }
+
 };
